@@ -17,7 +17,9 @@ class Phone(Field):
     def is_valid(self):
         if self.value.isdigit() and len(self.value) == 10:
             return True
-        return False
+        else:
+            print("Phone is in the wrong format.")
+            return False
 
 
 class Record:
@@ -39,9 +41,10 @@ class Record:
                 break
 
     def edit_phone(self, old_phone, new_phone):
-        for idx, phone in enumerate(self.phones):
-            if phone.__str__() == old_phone:
-                self.phones[idx] = Phone(new_phone)
+        if Phone(new_phone).is_valid():
+            for idx, phone in enumerate(self.phones):
+                if phone.__str__() == old_phone:
+                    self.phones[idx] = Phone(new_phone)
 
     def find_phone(self, phone):
         for abook_phone in self.phones:
