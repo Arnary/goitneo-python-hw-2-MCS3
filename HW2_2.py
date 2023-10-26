@@ -14,12 +14,10 @@ class Name(Field):
 
 
 class Phone(Field):
-    def is_valid(self):
-        if self.value.isdigit() and len(self.value) == 10:
-            return True
-        else:
-            print("Phone is in the wrong format.")
-            return False
+    def __init__(self, value):
+        if any((not value.isdigit(), len(value) != 10)):
+            raise ValueError("Phone is in the wrong format.")
+        super().__init__(value)
 
 
 class Record:
@@ -31,35 +29,33 @@ class Record:
         return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}"
 
     def add_phone(self, phone):
-        if Phone(phone).is_valid():
-            self.phones.append(Phone(phone))
+        phone = Phone(phone)
+        self.phones.append(phone)
 
     def remove_phone(self, phone):
         for idx, abook_phone in enumerate(self.phones):
-            if abook_phone.__str__() == phone:
+            if str(abook_phone) == phone:
                 self.phones.pop(idx)
                 break
 
     def edit_phone(self, old_phone, new_phone):
-        if Phone(new_phone).is_valid():
-            for idx, phone in enumerate(self.phones):
-                if phone.__str__() == old_phone:
-                    self.phones[idx] = Phone(new_phone)
+        for idx, phone in enumerate(self.phones):
+            if str(phone) == old_phone:
+                self.phones[idx] = Phone(new_phone)
 
     def find_phone(self, phone):
         for abook_phone in self.phones:
-            if abook_phone.__str__() == phone:
+            if str(abook_phone) == phone:
                 return phone
         return "Phone not found"
 
 
 class AddressBook(UserDict):
     def add_record(self, record):
-        self.data[record.name.__str__()] = record
+        self.data[str(record.name)] = record
 
     def find(self, name):
         return self.data.get(name)
 
     def delete(self, name):
         del self.data[name]
-
